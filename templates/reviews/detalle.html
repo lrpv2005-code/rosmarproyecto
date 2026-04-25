@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ serie.titulo }}{% endblock %}
+
+{% block content %}
+<div style="display: flex; gap: 3rem; align-items: flex-start; flex-wrap: wrap;">
+    <!-- Imagen de la Serie -->
+    <div style="flex: 1; min-width: 300px;">
+        <img src="{{ serie.imagen_url|default:'https://m.media-amazon.com/images/I/71p0WfB8w-L._AC_SL1500_.jpg' }}" alt="{{ serie.titulo }}" style="width: 100%; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+    </div>
+    
+    <!-- Info de la Serie y Sección de Reseñas -->
+    <div style="flex: 2; min-width: 300px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h1 style="font-size: 3rem; margin: 0 0 1rem 0;">{{ serie.titulo }}</h1>
+            <div style="background: var(--accent); color: white; padding: 0.5rem 1rem; border-radius: 10px; font-weight: bold; font-size: 1.5rem;">
+                ★ {{ serie.promedio_calificacion }}
+            </div>
+        </div>
+        <p style="font-size: 1.1rem; line-height: 1.6; color: #ced4da;">{{ serie.descripcion }}</p>
+        <p style="color: #adb5bd;"><strong>Estreno:</strong> {{ serie.fecha_estreno|default:"Desconocido" }}</p>
+        
+        <hr style="border-color: var(--glass-border); margin: 2rem 0;">
+        
+        <h2>Reseñas de la Comunidad</h2>
+        {% if user_has_reviewed %}
+            <div class="glass-card" style="padding: 1rem; text-align: center; background: rgba(157, 78, 221, 0.1); border-color: var(--primary);">
+                <p style="margin: 0; font-weight: 600; color: var(--primary);">Ya has dejado tu reseña para esta serie. ¡Gracias por participar!</p>
+            </div>
+        {% else %}
+            <div class="glass-card" style="margin-bottom: 2rem;">
+                <h3>Deja tu Reseña</h3>
+                {% if user.is_authenticated %}
+                <form method="post" style="display: flex; flex-direction: column;">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn-brand" style="border: none; cursor: pointer; padding: 1rem; font-size: 1.1rem;">Publicar Reseña</button>
+                </form>
+                {% else %}
+                <p>Por favor <a href="{% url 'login' %}" style="color: var(--primary);">Inicia Sesión</a> para dejar una reseña.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
+            {% for resena in resenas %}
+            <div class="glass-card" style="padding: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <strong style="color: var(--accent);">{{ resena.usuario.username }}</strong>
+                    <span style="background: rgba(255, 255, 255, 0.1); padding: 0.2rem 0.5rem; border-radius: 5px; font-size: 0.9rem;">⭐ {{ resena.calificacion }}/10</span>
+                </div>
+                <p style="margin: 0; color: #e9ecef;">{{ resena.comentario }}</p>
+                <small style="color: #6c757d; display: block; margin-top: 1rem;">{{ resena.fecha_creacion|date:"d M Y" }}</small>
+            </div>
+            {% empty %}
+            <p style="color: #adb5bd;">Aún no hay reseñas. ¡Sé el primero!</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

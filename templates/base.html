@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}VirtualReview{% endblock %} - Revista de Series</title>
+    <!-- Modern Font: Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #9d4edd;
+            --accent: #ff9e00;
+            --bg-dark: #100b1a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(circle at top right, #3c096c 0%, transparent 40%),
+                              radial-gradient(circle at bottom left, #03045e 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        /* Navbar CSS */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(16, 11, 26, 0.7);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            text-decoration: none;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .btn-brand {
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(45deg, var(--primary), #5a189a);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.4);
+        }
+
+        .btn-brand:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(157, 78, 221, 0.6);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid var(--glass-border);
+            margin-top: auto;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        /* Form stylings */
+        input, textarea {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: white;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="{% url 'home' %}" class="navbar-brand">VirtualReview</a>
+        <div class="nav-links">
+            {% if user.is_authenticated %}
+                <span>Hola, {{ user.username }}</span>
+                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+            {% else %}
+                <a href="{% url 'login' %}">Iniciar Sesión</a>
+                <a href="{% url 'registro' %}" class="btn-brand">Regístrate</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container fade-in">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2026 VirtualReview. Proyecto Lenguaje de Programación 2.</p>
+    </footer>
+
+</body>
+</html>
