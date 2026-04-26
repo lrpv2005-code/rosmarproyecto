@@ -2,11 +2,11 @@
 
 Bienvenido al proyecto de reseñas de series desarrollado en Django.
 
-## 🛠️ Requisitos
+## Requisitos
 - Python (recomendado 3.10 o superior)
 - Pip (Gestor de paquetes de Python)
 
-## 🚀 1. Instalación de Dependencias
+##  1. Instalación de Dependencias
 
 Antes de iniciar el servidor por primera vez, asegúrate de instalar las librerías necesarias. Abre una terminal o consola de comandos, asegúrate de estar dentro de la carpeta del proyecto y ejecuta:
 
@@ -14,7 +14,7 @@ Antes de iniciar el servidor por primera vez, asegúrate de instalar las librer�
 pip install -r requirements.txt
 ```
 
-## 🌐 2. Iniciar el Servidor Web
+##  2. Iniciar el Servidor Web
 
 Abre una terminal, asegúrate de estar dentro de la carpeta del proyecto y ejecuta el siguiente comando:
 
@@ -25,7 +25,7 @@ python manage.py runserver
 Luego de ejecutarlo, abre tu navegador web de preferencia (Chrome, Edge, etc.) y entra a la siguiente dirección:
 [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-## ⚙️ 3. Panel de Administración (Base de Datos)
+##  3. Panel de Administración (Base de Datos)
 
 El proyecto utiliza el potente panel de administración nativo de Django para gestionar la base de datos de manera visual e intuitiva.
 

@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ titulo_seccion }} - Trailers{% endblock %}
+
+{% block content %}
+<div class="glass-card" style="margin-bottom: 2rem;">
+    <h1 style="color: var(--accent); margin-top: 0;">{{ titulo_seccion }}</h1>
+    <p>Disfruta de los últimos trailers de lo que está por venir.</p>
+</div>
+
+{% if resultados %}
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+        {% for item in resultados %}
+            <div class="glass-card trailer-card" style="padding: 0; overflow: hidden; position: relative; border-radius: 12px; cursor: pointer;" onclick="openTrailer('{{ item.trailer_key }}')">
+                {% if item.imagen_url %}
+                    <img src="{{ item.imagen_url }}" alt="{{ item.titulo }}" style="width: 100%; height: 200px; object-fit: cover; display: block; transition: transform 0.3s ease;">
+                {% else %}
+                    <div style="width: 100%; height: 200px; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center;">
+                        <span style="color: #aaa;">Sin Imagen</span>
+                    </div>
+                {% endif %}
+                
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 200px; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; transition: background 0.3s ease;" class="trailer-overlay">
+                    {% if item.trailer_key %}
+                        <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); backdrop-filter: blur(5px); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid white;">
+                            <div style="width: 0; height: 0; border-style: solid; border-width: 10px 0 10px 16px; border-color: transparent transparent transparent white; margin-left: 5px;"></div>
+                        </div>
+                    {% else %}
+                        <span style="background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px;">Sin trailer</span>
+                    {% endif %}
+                </div>
+                
+                <div style="padding: 1rem; text-align: center; background: rgba(16, 11, 26, 0.9);">
+                    <h3 style="margin: 0 0 0.5rem 0; font-size: 1.1rem; color: white;">{{ item.titulo }}</h3>
+                    <p style="margin: 0; font-size: 0.85rem; color: #adb5bd; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ item.descripcion|default:"Prepárate para este próximo lanzamiento." }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Modal for YouTube Video -->
+    <div id="trailerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="position: relative; width: 80%; max-width: 800px; aspect-ratio: 16/9; background: black; border-radius: 10px; overflow: hidden; border: 1px solid var(--glass-border);">
+            <button onclick="closeTrailer()" style="position: absolute; top: -40px; right: 0; background: none; border: none; color: white; font-size: 2rem; cursor: pointer;">&times;</button>
+            <iframe id="youtubeIframe" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <style>
+        .trailer-card:hover img {
+            transform: scale(1.05);
+        }
+        .trailer-card:hover .trailer-overlay {
+            background: rgba(0,0,0,0.2);
+        }
+        .trailer-card:hover .trailer-overlay > div {
+            transform: scale(1.1);
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
+
+    <script>
+        function openTrailer(key) {
+            if (!key) return;
+            var modal = document.getElementById('trailerModal');
+            var iframe = document.getElementById('youtubeIframe');
+            iframe.src = "https://www.youtube.com/embed/" + key + "?autoplay=1";
+            modal.style.display = "flex";
+        }
+
+        function closeTrailer() {
+            var modal = document.getElementById('trailerModal');
+            var iframe = document.getElementById('youtubeIframe');
+            iframe.src = "";
+            modal.style.display = "none";
+        }
+        
+        // Close modal when clicking outside the video
+        document.getElementById('trailerModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTrailer();
+            }
+        });
+    </script>
+{% else %}
+    <div class="glass-card" style="text-align: center;">
+        <h3>No se encontraron resultados o trailers en esta categoría.</h3>
+    </div>
+{% endif %}
+{% endblock %}

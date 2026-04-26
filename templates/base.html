@@ -156,16 +156,85 @@
 
     <nav class="navbar">
         <a href="{% url 'home' %}" class="navbar-brand">VirtualReview</a>
-        <div class="nav-links">
+        
+        <form action="{% url 'buscar_serie' %}" method="GET" style="display: flex; gap: 10px; margin: 0 20px; flex-grow: 1; max-width: 400px;">
+            <input type="text" name="q" placeholder="Buscar serie en TMDB..." style="margin-bottom: 0; padding: 0.5rem 1rem;" required>
+            <button type="submit" class="btn-brand" style="border: none; cursor: pointer; padding: 0.5rem 1.5rem;">Buscar</button>
+        </form>
+
+        <div class="nav-links" style="display: flex; align-items: center;">
+            <div class="dropdown" style="position: relative; display: inline-block; margin-left: 2rem;">
+                <a href="#" class="dropbtn" style="cursor: pointer; margin-left: 0;">Películas ▼</a>
+                <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                    <a href="{% url 'populares' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
+                    <a href="{% url 'estrenos' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
+                    <a href="{% url 'prontas_estrenar' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
+                </div>
+            </div>
+            
+            <div class="dropdown" style="position: relative; display: inline-block; margin-left: 2rem;">
+                <a href="#" class="dropbtn" style="cursor: pointer; margin-left: 0;">Series ▼</a>
+                <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                    <a href="{% url 'populares' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
+                    <a href="{% url 'estrenos' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
+                    <a href="{% url 'prontas_estrenar' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
+                </div>
+            </div>
             {% if user.is_authenticated %}
-                <span>Hola, {{ user.username }}</span>
-                <a href="{% url 'logout' %}">Cerrar Sesión</a>
+                <div class="dropdown" style="position: relative; display: inline-block;">
+                    <a href="#" class="dropbtn" style="cursor: pointer;">Hola, {{ user.username }} ▼</a>
+                    <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; right: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                        <a href="{% url 'perfil' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Mi Perfil / Catálogo</a>
+                        <a href="{% url 'logout' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0; border-top: 1px solid var(--glass-border);">Cerrar Sesión</a>
+                    </div>
+                </div>
             {% else %}
                 <a href="{% url 'login' %}">Iniciar Sesión</a>
                 <a href="{% url 'registro' %}" class="btn-brand">Regístrate</a>
             {% endif %}
         </div>
     </nav>
+
+    <script>
+        // Dropdown toggle logic
+        document.addEventListener('DOMContentLoaded', function() {
+            var dropbtns = document.querySelectorAll('.dropbtn');
+            dropbtns.forEach(function(dropbtn) {
+                dropbtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Close other dropdowns
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        if (dropdowns[i] !== this.nextElementSibling && dropdowns[i].style.display === 'block') {
+                            dropdowns[i].style.display = 'none';
+                        }
+                    }
+
+                    var content = this.nextElementSibling;
+                    if (content.style.display === "block") {
+                        content.style.display = "none";
+                    } else {
+                        content.style.display = "block";
+                    }
+                });
+            });
+
+            // Close the dropdown if the user clicks outside of it
+            window.onclick = function(event) {
+                if (!event.target.matches('.dropbtn')) {
+                    var dropdowns = document.getElementsByClassName("dropdown-content");
+                    for (var i = 0; i < dropdowns.length; i++) {
+                        var openDropdown = dropdowns[i];
+                        if (openDropdown.style.display === 'block') {
+                            openDropdown.style.display = 'none';
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
 
     <div class="container fade-in">
         {% block content %}
