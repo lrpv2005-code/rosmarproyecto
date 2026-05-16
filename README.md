@@ -6,6 +6,25 @@ Bienvenido al proyecto de reseñas de series desarrollado en Django.
 - Python (recomendado 3.10 o superior)
 - Pip (Gestor de paquetes de Python)
 
+
+# 0. ENTORNO VIRTUAL TE ODIO DANIEL DIOS
+
+```bash
+sudo apt install python3-venv
+```
+```bash
+python3 -m venv venv
+```
+```bash
+source venv/bin/activate
+```
+
+no hay explicación, ejecuta los comandos y luego sigue con el resto de pasos
+
+
+
+
+
 ##  1. Instalación de Dependencias
 
 Antes de iniciar el servidor por primera vez, asegúrate de instalar las librerías necesarias. Abre una terminal o consola de comandos, asegúrate de estar dentro de la carpeta del proyecto y ejecuta:
