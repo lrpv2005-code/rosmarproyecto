@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +27,7 @@
             display: flex;
             flex-direction: column;
             background-image: radial-gradient(circle at top right, #3c096c 0%, transparent 40%),
-                              radial-gradient(circle at bottom left, #03045e 0%, transparent 40%);
+                radial-gradient(circle at bottom left, #03045e 0%, transparent 40%);
             background-attachment: fixed;
         }
 
@@ -116,27 +117,35 @@
 
         /* Animations */
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        
+
         .fade-in {
             animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        
+
         /* Grid Layout */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 2rem;
         }
-        
+
         /* Form stylings */
-        input, textarea {
+        input,
+        textarea {
             width: 100%;
             padding: 1rem;
             margin-bottom: 1rem;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
             border-radius: 10px;
             color: white;
@@ -144,65 +153,126 @@
             font-family: 'Outfit', sans-serif;
             transition: border-color 0.3s ease;
         }
-        
-        input:focus, textarea:focus {
+
+        input:focus,
+        textarea:focus {
             outline: none;
             border-color: var(--primary);
         }
 
+        /* Fix Webkit Autofill background */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        /* Red Banner for Errors */
+        ul.errorlist, .alert-error {
+            list-style: none;
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #ff6b6b;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.1);
+            padding-left: 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.15);
+            border: 1px solid rgba(40, 167, 69, 0.5);
+            color: #51cf66;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+        }
+
+        ul.errorlist li {
+            margin-bottom: 0.3rem;
+        }
+
+        ul.errorlist li:last-child {
+            margin-bottom: 0;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
         <a href="{% url 'home' %}" class="navbar-brand">VirtualReview</a>
-        
-        <form action="{% url 'buscar_serie' %}" method="GET" style="display: flex; gap: 10px; margin: 0 20px; flex-grow: 1; max-width: 400px;">
-            <input type="text" name="q" placeholder="Buscar serie en TMDB..." style="margin-bottom: 0; padding: 0.5rem 1rem;" required>
-            <button type="submit" class="btn-brand" style="border: none; cursor: pointer; padding: 0.5rem 1.5rem;">Buscar</button>
+
+        <form action="{% url 'buscar_serie' %}" method="GET"
+            style="display: flex; gap: 10px; margin: 0 20px; flex-grow: 1; max-width: 400px;">
+            <input type="text" name="q" placeholder="Buscar series y peliculas..."
+                style="margin-bottom: 0; padding: 0.5rem 1rem;" required>
+            <button type="submit" class="btn-brand"
+                style="border: none; cursor: pointer; padding: 0.5rem 1.5rem;">Buscar</button>
         </form>
 
         <div class="nav-links" style="display: flex; align-items: center;">
             <div class="dropdown" style="position: relative; display: inline-block; margin-left: 2rem;">
                 <a href="#" class="dropbtn" style="cursor: pointer; margin-left: 0;">Películas ▼</a>
-                <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
-                    <a href="{% url 'populares' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
-                    <a href="{% url 'estrenos' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
-                    <a href="{% url 'prontas_estrenar' 'movie' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
+                <div class="dropdown-content"
+                    style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                    <a href="{% url 'populares' 'movie' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
+                    <a href="{% url 'estrenos' 'movie' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
+                    <a href="{% url 'prontas_estrenar' 'movie' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
                 </div>
             </div>
-            
+
             <div class="dropdown" style="position: relative; display: inline-block; margin-left: 2rem;">
                 <a href="#" class="dropbtn" style="cursor: pointer; margin-left: 0;">Series ▼</a>
-                <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
-                    <a href="{% url 'populares' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
-                    <a href="{% url 'estrenos' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
-                    <a href="{% url 'prontas_estrenar' 'tv' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
+                <div class="dropdown-content"
+                    style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; left: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                    <a href="{% url 'populares' 'tv' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Popular</a>
+                    <a href="{% url 'estrenos' 'tv' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Estrenos</a>
+                    <a href="{% url 'prontas_estrenar' 'tv' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Próximamente</a>
                 </div>
             </div>
             {% if user.is_authenticated %}
-                <div class="dropdown" style="position: relative; display: inline-block;">
-                    <a href="#" class="dropbtn" style="cursor: pointer;">Hola, {{ user.username }} ▼</a>
-                    <div class="dropdown-content" style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; right: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
-                        <a href="{% url 'perfil' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Mi Perfil / Catálogo</a>
-                        <a href="{% url 'logout' %}" style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0; border-top: 1px solid var(--glass-border);">Cerrar Sesión</a>
-                    </div>
+            <div class="dropdown" style="position: relative; display: inline-block;">
+                <a href="#" class="dropbtn" style="cursor: pointer;">Hola, {{ user.username }} ▼</a>
+                <div class="dropdown-content"
+                    style="display: none; position: absolute; background-color: var(--bg-dark); min-width: 160px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5); z-index: 1; right: 0; border: 1px solid var(--glass-border); border-radius: 10px; overflow: hidden; margin-top: 10px;">
+                    <a href="{% url 'perfil' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0;">Mi
+                        Perfil / Catálogo</a>
+                    <a href="{% url 'logout' %}"
+                        style="color: white; padding: 12px 16px; text-decoration: none; display: block; margin: 0; border-top: 1px solid var(--glass-border);">Cerrar
+                        Sesión</a>
                 </div>
+            </div>
             {% else %}
-                <a href="{% url 'login' %}">Iniciar Sesión</a>
-                <a href="{% url 'registro' %}" class="btn-brand">Regístrate</a>
+            <a href="{% url 'login' %}">Iniciar Sesión</a>
+            <a href="{% url 'registro' %}" class="btn-brand">Regístrate</a>
             {% endif %}
         </div>
     </nav>
 
     <script>
         // Dropdown toggle logic
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var dropbtns = document.querySelectorAll('.dropbtn');
-            dropbtns.forEach(function(dropbtn) {
-                dropbtn.addEventListener('click', function(e) {
+            dropbtns.forEach(function (dropbtn) {
+                dropbtn.addEventListener('click', function (e) {
                     e.preventDefault();
-                    
+
                     // Close other dropdowns
                     var dropdowns = document.getElementsByClassName("dropdown-content");
                     for (var i = 0; i < dropdowns.length; i++) {
@@ -221,7 +291,7 @@
             });
 
             // Close the dropdown if the user clicks outside of it
-            window.onclick = function(event) {
+            window.onclick = function (event) {
                 if (!event.target.matches('.dropbtn')) {
                     var dropdowns = document.getElementsByClassName("dropdown-content");
                     for (var i = 0; i < dropdowns.length; i++) {
@@ -233,10 +303,67 @@
                 }
             }
         });
+
+        // Eye toggle for password fields
+        document.addEventListener('DOMContentLoaded', function () {
+            const eyeOpenSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+            const eyeClosedSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+
+            const passwordInputs = document.querySelectorAll('input[type="password"]');
+            passwordInputs.forEach(function (input) {
+                const wrapper = document.createElement('div');
+                wrapper.style.position = 'relative';
+                wrapper.style.display = 'flex';
+                wrapper.style.alignItems = 'center';
+                wrapper.style.marginBottom = '1rem';
+                wrapper.style.width = '100%';
+                
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+                
+                input.style.marginBottom = '0';
+                input.style.paddingRight = '45px';
+                
+                const toggleIcon = document.createElement('span');
+                toggleIcon.innerHTML = eyeOpenSVG;
+                toggleIcon.style.position = 'absolute';
+                toggleIcon.style.right = '15px';
+                toggleIcon.style.cursor = 'pointer';
+                toggleIcon.style.color = '#adb5bd';
+                toggleIcon.style.display = 'flex';
+                toggleIcon.style.alignItems = 'center';
+                toggleIcon.style.justifyContent = 'center';
+                toggleIcon.style.transition = 'color 0.3s ease';
+                
+                toggleIcon.addEventListener('mouseenter', () => toggleIcon.style.color = 'var(--primary)');
+                toggleIcon.addEventListener('mouseleave', () => toggleIcon.style.color = '#adb5bd');
+                
+                toggleIcon.addEventListener('click', function () {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        toggleIcon.innerHTML = eyeClosedSVG;
+                    } else {
+                        input.type = 'password';
+                        toggleIcon.innerHTML = eyeOpenSVG;
+                    }
+                });
+                
+                wrapper.appendChild(toggleIcon);
+            });
+        });
     </script>
 
 
     <div class="container fade-in">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                <div class="{% if message.tags == 'error' %}alert-error{% elif message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </div>
@@ -246,4 +373,5 @@
     </footer>
 
 </body>
+
 </html>

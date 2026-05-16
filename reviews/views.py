@@ -150,31 +150,36 @@ def buscar_serie_view(request):
             
     return render(request, 'reviews/resultados_busqueda.html', {'resultados': resultados, 'query': query})
 
-def _obtener_o_crear_serie_tmdb(tmdb_id):
-    serie = Serie.objects.filter(tmdb_id=tmdb_id).first()
+def _obtener_o_crear_serie_tmdb(tmdb_id, media_type='tv'):
+    serie = Serie.objects.filter(tmdb_id=tmdb_id, tipo=media_type).first()
     if not serie:
         from .tmdb_service import obtener_detalle_serie
-        detalle = obtener_detalle_serie(tmdb_id)
+        detalle = obtener_detalle_serie(tmdb_id, media_type)
         if detalle:
-            serie = Serie.objects.create(
-                tmdb_id=detalle['tmdb_id'],
-                titulo=detalle['titulo'],
-                descripcion=detalle['descripcion'],
-                fecha_estreno=detalle['fecha_estreno'],
-                imagen_url=detalle['imagen_url']
-            )
+            try:
+                serie = Serie.objects.create(
+                    tmdb_id=detalle['tmdb_id'],
+                    titulo=detalle['titulo'],
+                    descripcion=detalle['descripcion'],
+                    fecha_estreno=detalle['fecha_estreno'],
+                    imagen_url=detalle['imagen_url'],
+                    tipo=media_type
+                )
+            except Exception as e:
+                # If there's an integrity error because tmdb_id is not unique (TV vs Movie overlapping)
+                serie = Serie.objects.filter(tmdb_id=tmdb_id).first()
     return serie
 
-def agregar_desde_tmdb(request, tmdb_id):
+def agregar_desde_tmdb(request, media_type, tmdb_id):
     # This acts as the "Dejar reseña" action: prepares DB and redirects to detail
-    serie = _obtener_o_crear_serie_tmdb(tmdb_id)
+    serie = _obtener_o_crear_serie_tmdb(tmdb_id, media_type)
     if serie:
         return redirect('detalle_serie', serie_id=serie.id)
     return redirect('home')
 
 @login_required
-def agregar_catalogo_personal(request, tmdb_id):
-    serie = _obtener_o_crear_serie_tmdb(tmdb_id)
+def agregar_catalogo_personal(request, media_type, tmdb_id):
+    serie = _obtener_o_crear_serie_tmdb(tmdb_id, media_type)
     if serie:
         serie.usuarios_que_guardaron.add(request.user)
     

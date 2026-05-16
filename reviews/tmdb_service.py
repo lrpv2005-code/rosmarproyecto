@@ -11,11 +11,11 @@ def get_headers():
     }
 
 def buscar_series(query):
-    """Busca series en TMDB por nombre."""
+    """Busca series y películas en TMDB por nombre."""
     if not query:
         return []
     
-    url = f"{TMDB_BASE_URL}/search/tv"
+    url = f"{TMDB_BASE_URL}/search/multi"
     params = {
         'query': query,
         'language': 'es-ES', # Prefer Spanish results
@@ -29,25 +29,40 @@ def buscar_series(query):
         
         resultados = []
         for item in data.get('results', []):
+            if item.get('media_type') not in ['tv', 'movie']:
+                continue
             # Formatear la imagen si existe
             poster_path = item.get('poster_path')
             imagen_url = f"{TMDB_IMAGE_BASE_URL}{poster_path}" if poster_path else None
             
+            titulo = item.get('name') if item.get('media_type') == 'tv' else item.get('title')
+            fecha_estreno = item.get('first_air_date') if item.get('media_type') == 'tv' else item.get('release_date')
+            
+            ultima_fecha_estreno = None
+            if item.get('media_type') == 'tv':
+                detalles = obtener_detalle_serie(item.get('id'), 'tv')
+                if detalles and detalles.get('seasons'):
+                    seasons = detalles['seasons']
+                    if seasons:
+                        ultima_fecha_estreno = seasons[-1].get('fecha_estreno')
+            
             resultados.append({
                 'tmdb_id': item.get('id'),
-                'titulo': item.get('name'),
+                'titulo': titulo,
                 'descripcion': item.get('overview'),
-                'fecha_estreno': item.get('first_air_date'),
-                'imagen_url': imagen_url
+                'fecha_estreno': fecha_estreno,
+                'ultima_fecha_estreno': ultima_fecha_estreno,
+                'imagen_url': imagen_url,
+                'media_type': item.get('media_type')
             })
         return resultados
     except requests.RequestException as e:
         print(f"Error al buscar en TMDB: {e}")
         return []
 
-def obtener_detalle_serie(tmdb_id):
-    """Obtiene los detalles completos de una serie desde TMDB."""
-    url = f"{TMDB_BASE_URL}/tv/{tmdb_id}"
+def obtener_detalle_serie(tmdb_id, media_type='tv'):
+    """Obtiene los detalles completos de una serie o película desde TMDB."""
+    url = f"{TMDB_BASE_URL}/{media_type}/{tmdb_id}"
     params = {
         'language': 'es-ES'
     }
@@ -65,25 +80,26 @@ def obtener_detalle_serie(tmdb_id):
         if not fecha_estreno:
             fecha_estreno = None
             
-        # Parse seasons
+        # Parse seasons for tv shows
         seasons = []
-        for season in item.get('seasons', []):
-            # Skip season 0 (Specials) if preferred, or include it
-            season_poster = season.get('poster_path')
-            seasons.append({
-                'nombre': season.get('name'),
-                'episodios': season.get('episode_count'),
-                'fecha_estreno': season.get('air_date'),
-                'descripcion': season.get('overview'),
-                'imagen_url': f"{TMDB_IMAGE_BASE_URL}{season_poster}" if season_poster else None,
-                'calificacion': season.get('vote_average')
-            })
+        if media_type == 'tv':
+            for season in item.get('seasons', []):
+                # Skip season 0 (Specials) if preferred, or include it
+                season_poster = season.get('poster_path')
+                seasons.append({
+                    'nombre': season.get('name'),
+                    'episodios': season.get('episode_count'),
+                    'fecha_estreno': season.get('air_date'),
+                    'descripcion': season.get('overview'),
+                    'imagen_url': f"{TMDB_IMAGE_BASE_URL}{season_poster}" if season_poster else None,
+                    'calificacion': season.get('vote_average')
+                })
             
         return {
             'tmdb_id': item.get('id'),
-            'titulo': item.get('name'),
+            'titulo': item.get('name') if media_type == 'tv' else item.get('title'),
             'descripcion': item.get('overview', 'Sin descripción.'),
-            'fecha_estreno': fecha_estreno,
+            'fecha_estreno': fecha_estreno if media_type == 'tv' else item.get('release_date'),
             'imagen_url': imagen_url,
             'seasons': seasons
         }
@@ -100,14 +116,24 @@ def _fetch_media_list(endpoint, media_type):
         data = response.json()
         
         resultados = []
-        for item in data.get('results', []):
+        for item in data.get('results', [])[:10]: # Limitar a 10 para no saturar la API
             poster_path = item.get('poster_path')
             imagen_url = f"{TMDB_IMAGE_BASE_URL}{poster_path}" if poster_path else None
+            
+            ultima_fecha_estreno = None
+            if media_type == 'tv':
+                detalles = obtener_detalle_serie(item.get('id'), 'tv')
+                if detalles and detalles.get('seasons'):
+                    seasons = detalles['seasons']
+                    if seasons:
+                        ultima_fecha_estreno = seasons[-1].get('fecha_estreno')
+                        
             resultados.append({
                 'tmdb_id': item.get('id'),
                 'titulo': item.get('name') if media_type == 'tv' else item.get('title'),
                 'descripcion': item.get('overview'),
                 'fecha_estreno': item.get('first_air_date') if media_type == 'tv' else item.get('release_date'),
+                'ultima_fecha_estreno': ultima_fecha_estreno,
                 'imagen_url': imagen_url,
                 'media_type': media_type
             })

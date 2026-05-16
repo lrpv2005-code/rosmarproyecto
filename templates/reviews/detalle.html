@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ serie.titulo }}{% endblock %}
 
@@ -18,7 +19,12 @@
             </div>
         </div>
         <p style="font-size: 1.1rem; line-height: 1.6; color: #ced4da;">{{ serie.descripcion }}</p>
-        <p style="color: #adb5bd;"><strong>Estreno:</strong> {{ serie.fecha_estreno|default:"Desconocido" }}</p>
+        <p style="color: #adb5bd;"><strong>Fecha de estreno:</strong> {{ serie.fecha_estreno|default:"Desconocido" }}</p>
+        {% if seasons %}
+            {% with last_season=seasons|last %}
+            <p style="color: #adb5bd;"><strong>Estreno de la Última Temporada:</strong> {{ last_season.fecha_estreno|default:"Desconocido" }}</p>
+            {% endwith %}
+        {% endif %}
         
         <hr style="border-color: var(--glass-border); margin: 2rem 0;">
         
@@ -50,7 +56,7 @@
                         {{ season.episodios }} Episodios
                     </p>
                     {% if season.fecha_estreno %}
-                        <p style="margin: 0 0 1rem 0; color: #ced4da; font-size: 0.95rem;">Estreno: {{ season.fecha_estreno }}</p>
+                        <p style="margin: 0 0 1rem 0; color: #ced4da; font-size: 0.95rem;">Estreno de temporada: {{ season.fecha_estreno }}</p>
                     {% endif %}
                     {% if season.descripcion %}
                         <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: #adb5bd;">{{ season.descripcion }}</p>
@@ -88,12 +94,15 @@
         <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem;">
             {% for resena in resenas %}
             <div class="glass-card" style="padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <strong style="color: var(--accent);">{{ resena.usuario.username }}</strong>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="{% static 'imagenes/default_avatar.png' %}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; background-color: #9A9A9A; object-fit: cover; border: 2px solid var(--glass-border);">
+                        <strong style="color: var(--accent); font-size: 1.1rem;">{{ resena.usuario.username }}</strong>
+                    </div>
                     <span style="background: rgba(255, 255, 255, 0.1); padding: 0.2rem 0.5rem; border-radius: 5px; font-size: 0.9rem;">⭐ {{ resena.calificacion }}/10</span>
                 </div>
-                <p style="margin: 0; color: #e9ecef;">{{ resena.comentario }}</p>
-                <small style="color: #6c757d; display: block; margin-top: 1rem;">{{ resena.fecha_creacion|date:"d M Y" }}</small>
+                <p style="margin: 0; color: #e9ecef; padding-left: 50px;">{{ resena.comentario }}</p>
+                <small style="color: #6c757d; display: block; margin-top: 1rem; padding-left: 50px;">{{ resena.fecha_creacion|date:"d M Y" }}</small>
             </div>
             {% empty %}
             <p style="color: #adb5bd;">Aún no hay reseñas. ¡Sé el primero!</p>

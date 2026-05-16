@@ -74,7 +74,7 @@ def populate():
             'descripcion': 'Un falso documental sobre el día a día de unos mediocres pero divertidos oficinistas, en Dunder Mifflin.',
             'fecha_estreno': date(2005, 3, 24),
             'imagen_url': '/static/imagenes/theofice.jpg'
-        }
+        }, 
     ]
     
     for s in series:

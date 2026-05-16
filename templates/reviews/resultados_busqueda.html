@@ -26,14 +26,20 @@
                     <p style="color: #aaa; font-size: 0.9rem;">Estreno: {{ serie.fecha_estreno }}</p>
                 {% endif %}
                 
+                {% if serie.media_type == 'tv' or not serie.media_type %}
+                    {% if serie.ultima_fecha_estreno %}
+                    <p style="color: #adb5bd;"><strong>Estreno Última Temporada:</strong> {{ serie.ultima_fecha_estreno }}</p>
+                    {% endif %}
+                {% endif %}
+                
                 <div style="margin-top: auto; padding-top: 1rem; width: 100%; display: flex; flex-direction: column; gap: 0.5rem;">
                     {% if serie.guardada_por_usuario %}
                         <button class="btn-brand" style="display: block; width: 100%; border: none; background: #6c757d; cursor: default; box-shadow: none;" disabled>Agregado al catálogo</button>
                     {% else %}
-                        <a href="{% url 'agregar_catalogo_personal' serie.tmdb_id %}" class="btn-brand" style="display: block; background: linear-gradient(45deg, #00b4d8, #0077b6);">Agregar al Catálogo</a>
+                        <a href="{% url 'agregar_catalogo_personal' serie.media_type|default:'tv' serie.tmdb_id %}" class="btn-brand" style="display: block; background: linear-gradient(45deg, #00b4d8, #0077b6); box-shadow: 0 4px 15px rgba(0, 180, 216, 0.4);">Agregar al Catálogo</a>
                     {% endif %}
                     
-                    <a href="{% url 'agregar_desde_tmdb' serie.tmdb_id %}" class="btn-brand" style="display: block;">Dejar reseña</a>
+                    <a href="{% url 'agregar_desde_tmdb' serie.media_type|default:'tv' serie.tmdb_id %}" class="btn-brand" style="display: block;">Dejar reseña</a>
                 </div>
             </div>
         {% endfor %}
