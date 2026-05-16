@@ -1,0 +1,40 @@
+DOCUMENTACIÓN DEL PROYECTO - VIRTUALREVIEW
+===========================================
+
+1. ¿Cómo funciona el código y qué APIs usa?
+-------------------------------------------
+El proyecto está construido utilizando Django, un potente framework web de Python. Funciona bajo el patrón Modelo-Plantilla-Vista (MTV):
+- Cuando un usuario interactúa con la página, las "Vistas" (views.py) deciden qué hacer.
+- Las Vistas consultan la base de datos a través de los "Modelos" (models.py) si es necesario.
+- Finalmente, se responde al usuario inyectando los datos en las "Plantillas" (archivos HTML en templates/).
+
+API Utilizada: 
+El proyecto está conectado a la API externa de TMDB (The Movie Database). Se usa el archivo `tmdb_service.py` para hacer peticiones en tiempo real a esta API y obtener los estrenos, las series populares, las fechas de salida, portadas, descripciones y las distintas temporadas de una serie sin tener que registrarlas manualmente en la base de datos.
+
+
+2. ¿Qué guarda cada carpeta?
+-------------------------------------------
+- `core/`: Es el corazón de la configuración de Django. Guarda las rutas principales del proyecto (urls.py) y las configuraciones de seguridad y aplicaciones instaladas (settings.py).
+- `reviews/`: Es la "Aplicación" principal. Aquí vive toda la lógica: la conexión a la base de datos (models.py), las lógicas de las pantallas (views.py), los formularios de registro (forms.py) y el conector a la API de películas (tmdb_service.py).
+- `static/`: Aquí se guardan los archivos estáticos públicos que el navegador debe cargar para darle estilo visual a la página (por ejemplo: la subcarpeta `imagenes/` donde guardamos la foto de perfil `default_avatar.png` del perrito).
+- `templates/`: Guarda todos los archivos HTML (la interfaz visual). Contiene la plantilla maestra (`base.html`) que tiene la barra de navegación, y la subcarpeta `reviews/` donde están las diferentes páginas como el perfil, detalle de películas, listas, inicio de sesión y registro.
+
+
+3. ¿Dónde está la base de datos y qué cosas nuevas añadimos?
+-------------------------------------------
+- Dónde está: La base de datos es el archivo `db.sqlite3` que se encuentra en la carpeta principal del proyecto. Es una base de datos ligera incluida con Django, perfecta para el desarrollo.
+- Qué se añadió recientemente en la base de datos:
+  - Sistema de Reseñas: Una tabla que vincula a un Usuario, una Serie/Película, una puntuación (1-10) y un comentario textual, con fechas de creación.
+  - Catálogo Personal: Una relación que le permite a un Usuario tener su propia colección de "Series Guardadas" que aparecen en su perfil.
+  - Diferenciación Película/Serie: Ahora la base de datos local sabe distinguir si el elemento es tipo "tv" (Serie) o tipo "movie" (Película), y usa un ID único de la API de TMDB para evitar duplicados.
+
+
+4. ¿Qué tiene de diferente actualmente la página? (Últimos cambios)
+-------------------------------------------
+1. Interfaz Premium: Diseño con efecto "Glassmorphism" (cristal translúcido), tipografías modernas y un fondo oscuro dinámico de color azul/morado.
+2. Interacciones Pulidas: 
+   - Se añadió un "ojito" interactivo (SVG gris que se vuelve morado) en los campos de contraseña del registro/login para previsualizar el texto.
+   - Solucionamos un error visual donde Chrome cambiaba a blanco el fondo oscuro al usar el "autocompletado" en formularios.
+3. Banners de Error: Ahora, si te equivocas de contraseña o usuario, el error se muestra en un banner rojo muy visible y bien estilizado, reemplazando el texto crudo por defecto.
+4. Avatares de Usuario: Ahora todos los comentarios y la página de "Mi Perfil" cargan de forma dinámica y centrada el avatar circular con el fondo gris (el perrito predeterminado).
+5. Organización por Películas y Series: La barra superior tiene menús desplegables claros y permite buscar contenido de todo el mundo en español, trayendo las portadas y fechas directamente desde internet (TMDB).
